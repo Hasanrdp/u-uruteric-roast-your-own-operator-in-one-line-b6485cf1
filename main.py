@@ -25,6 +25,14 @@ def main():
     os.makedirs("/output", exist_ok=True)
     with open("/output/entry.txt", "w", encoding="utf-8", newline="") as f:
         f.write(ROAST)
+    # Post-write read-back gate: the bytes on disk must be exactly the
+    # roast, within the 1-160 character gate.
+    with open("/output/entry.txt", "r", encoding="utf-8", newline="") as f:
+        written = f.read()
+    if written != ROAST:
+        raise SystemExit("read-back mismatch: entry.txt does not equal the expected roast")
+    if not 1 <= len(written) <= 160:
+        raise SystemExit("read-back failed: roast must be 1 to 160 characters")
 
 
 if __name__ == "__main__":
